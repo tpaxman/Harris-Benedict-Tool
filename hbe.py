@@ -9,7 +9,7 @@ def main():
    weight = float(raw_input('Weight in pounds: '))
    age = float(raw_input('Age in years: '))
 
-   if(gender is 'm'):
+   if(gender == 'm'):
       bmr = 66
       bmr += (6.23 * weight)
       bmr += (12.7 * height)
