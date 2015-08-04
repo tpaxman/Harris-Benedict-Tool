@@ -3,13 +3,13 @@ import sys
 def main():
    acceptible_activities = {1, 2, 3, 4, 5}
    gender = raw_input('Enter your gender(m or f): ')
-   while(gender is not 'm' and gender is not 'f'):
+   while(gender != 'm' and gender != 'f'):
       gender = raw_input('Please enter m or f: ')
    height = float(raw_input('Height in inches: '))
    weight = float(raw_input('Weight in pounds: '))
    age = float(raw_input('Age in years: '))
 
-   if(gender is 'm'):
+   if(gender == 'm'):
       bmr = 66
       bmr += (6.23 * weight)
       bmr += (12.7 * height)
@@ -27,19 +27,19 @@ def main():
    while(activity not in acceptible_activities):
       activity = input("Please enter a number between 1 and 5: ")
 
-   if activity is 1:
+   if activity == 1:
       total = bmr * 1.2
 
-   elif activity is 2:
+   elif activity == 2:
       total = bmr * 1.375
 
-   elif activity is 3:
+   elif activity == 3:
       total = bmr * 1.55
 
-   elif activity is 4:
+   elif activity == 4:
       total = bmr * 1.7
 
-   elif activity is 5:
+   elif activity == 5:
       total = bmr * 1.9
 
    print "You burn " + str(total) + " calories per day."
