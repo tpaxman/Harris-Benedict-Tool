@@ -2,12 +2,12 @@ import sys
 
 def main():
    acceptible_activities = {1, 2, 3, 4, 5}
-   gender = raw_input('Enter your gender(m or f): ')
+   gender = input('Enter your gender(m or f): ')
    while(gender != 'm' and gender != 'f'):
-      gender = raw_input('Please enter m or f: ')
-   height = float(raw_input('Height in inches: '))
-   weight = float(raw_input('Weight in pounds: '))
-   age = float(raw_input('Age in years: '))
+      gender = input('Please enter m or f: ')
+   height = float(input('Height in inches: '))
+   weight = float(input('Weight in pounds: '))
+   age = float(input('Age in years: '))
 
    if(gender == 'm'):
       bmr = 66
@@ -20,12 +20,11 @@ def main():
       bmr += (4.7 * height)
       bmr -= (4.7 * age)
 
-   print "Your BMR is " + str(bmr)
+   print("Your BMR is " + str(bmr))
 
-   activity = input("How active are you? 1 for sedentary, 2 for lightly active, 3 for moderately active, 4 for very active, and 5 for extremely active: ")
-
+   activity = int(input("How active are you? 1 for sedentary, 2 for lightly active, 3 for moderately active, 4 for very active, and 5 for extremely active: "))
    while(activity not in acceptible_activities):
-      activity = input("Please enter a number between 1 and 5: ")
+      activity = int(input("Please enter a number between 1 and 5: "))
 
    if activity == 1:
       total = bmr * 1.2
@@ -42,7 +41,7 @@ def main():
    elif activity == 5:
       total = bmr * 1.9
 
-   print "You burn " + str(total) + " calories per day."
+   print("You burn " + str(total) + " calories per day.")
 
 if __name__ == '__main__':
    main()
