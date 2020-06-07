@@ -1,47 +1,96 @@
-import sys
+ACTIVITY_LEVELS = {
+    1: {'factor': 1.200, 'descrip': 'sedentary'},
+    2: {'factor': 1.375, 'descrip': 'lightly active'},
+    3: {'factor': 1.550, 'descrip': 'moderately active'},
+    4: {'factor': 1.700, 'descrip': 'very active'},
+    5: {'factor': 1.900, 'descrip': 'extremely active'},
+}
+
+GENDER_COEFFICIENTS = {
+    'm': {'const': 66, 'weight': 6.23, 'height': 12.7, 'age': 6.8},
+    'f': {'const': 655, 'weight': 4.35, 'height': 4.7, 'age': 4.7},
+}
+
 
 def main():
-   acceptible_activities = {1, 2, 3, 4, 5}
-   gender = input('Enter your gender(m or f): ')
-   while(gender != 'm' and gender != 'f'):
-      gender = input('Please enter m or f: ')
-   height = float(input('Height in inches: '))
-   weight = float(input('Weight in pounds: '))
-   age = float(input('Age in years: '))
+    # get attributes
+    get_number = lambda msg: input_extended(msg, float, lambda x: x > 0)
 
-   if(gender == 'm'):
-      bmr = 66
-      bmr += (6.23 * weight)
-      bmr += (12.7 * height)
-      bmr -= (6.8 * age)
-   else:
-      bmr = 655
-      bmr += (4.35 * weight)
-      bmr += (4.7 * height)
-      bmr -= (4.7 * age)
+    height_inch = get_number('Height in inches: ')
+    weight_lbs = get_number('Weight in pounds: ')
+    age_years = get_number('Age in years: ')
+    gender = input_extended('Enter your gender (m or f): ',
+                            criteria=lambda x: x in GENDER_COEFFICIENTS.keys())
 
-   print("Your BMR is " + str(bmr))
+    descriptions = {k: v['descrip'] for k, v in ACTIVITY_LEVELS.items()}
+    descrip_strings = [f'{k} = {v}' for k, v in descriptions.items()]
+    all_descrips = '\n'.join(['How active are you?'] + descrip_strings) + '\n'
+    activity = input_extended(all_descrips, int, lambda x: x in ACTIVITY_LEVELS.keys())
 
-   activity = int(input("How active are you? 1 for sedentary, 2 for lightly active, 3 for moderately active, 4 for very active, and 5 for extremely active: "))
-   while(activity not in acceptible_activities):
-      activity = int(input("Please enter a number between 1 and 5: "))
+    # Calculations
+    bmr = calc_bmr(gender, weight_lbs, height_inch, age_years)
+    calories_burned = calc_calories_burned(bmr, activity)
 
-   if activity == 1:
-      total = bmr * 1.2
+    print("Your BMR is " + str(bmr))
+    print("You burn " + str(calories_burned) + " calories per day.")
 
-   elif activity == 2:
-      total = bmr * 1.375
 
-   elif activity == 3:
-      total = bmr * 1.55
+def calc_bmr(gender, weight_lbs, height_inch, age_years):
+    coefs = GENDER_COEFFICIENTS.get(gender)
+    bmr = (coefs['const']
+           + coefs['weight'] * weight_lbs
+           + coefs['height'] * height_inch
+           - coefs['age'] * age_years)
+    return bmr
 
-   elif activity == 4:
-      total = bmr * 1.7
 
-   elif activity == 5:
-      total = bmr * 1.9
+def calc_calories_burned(bmr, activity):
+    activity_factor = ACTIVITY_LEVELS[activity]['factor']
+    return bmr * activity_factor
 
-   print("You burn " + str(total) + " calories per day.")
+
+def input_extended(prompt, cast_to=None, criteria=None):
+
+    # verify the function inputs
+    assert isinstance(prompt, str)
+
+    if cast_to:
+        assert callable(cast_to), 'Cast_to must be callable'
+        assert isinstance(cast_to, type), 'Cast_to must be a type'
+
+    if criteria:
+        assert callable(criteria), 'Criteria must be callable'
+
+    # keep requesting input until a valid value is given
+    while True:
+
+        raw_value = input(prompt)
+
+        # cast input value to some type
+        if not cast_to:
+            casted_value = raw_value
+        else:
+            try:
+                casted_value = cast_to(raw_value)
+            except ValueError:
+                print(f'Cannot cast input to {str(cast_to)}')
+                continue  # skip the rest, loop again
+
+        # check if the input is valid based on criteria function
+        if not criteria:
+            return casted_value
+        else:
+            is_valid = criteria(casted_value)
+            assert isinstance(is_valid, bool), 'Validate_func must return bool'
+            if is_valid:
+                validated_value = casted_value
+                break
+            else:
+                print('Invalid entry')
+                continue
+
+    return validated_value
+
 
 if __name__ == '__main__':
-   main()
+    main()
